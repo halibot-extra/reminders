@@ -4,6 +4,15 @@ from halibot import HalModule, HalConfigurer, Message
 
 class Reminders(HalModule):
 
+	topics = {
+		'remind': '''Set reminders for specific times.
+
+Usage:
+  !remind at [time] [message]
+  !remind [who] at [time] [message]
+'''
+	}
+
 	class Configurer(HalConfigurer):
 		def configure(self):
 			self.optionInt('default-timezone', prompt='Default by UTC offset', default=0)
@@ -11,12 +20,6 @@ class Reminders(HalModule):
 
 	def init(self):
 		pass
-
-	def remind_usage(self, msg):
-		self.reply(msg, body='''Usage:
-  !remind at [time] [message]
-  !remind [who] at [time] [message]
-''')
 
 	def remind(self, body, dest, author):
 		via = author + ' via !remind'
@@ -83,5 +86,5 @@ class Reminders(HalModule):
 			self.log.info('Reminder to '+dest+' scheduled for '+str(time.ctime())+' ('+str(delay)+'s later) by '+msg.author)
 			self.reply(msg, body='Reminder set.')
 		elif msg.body.strip().startswith('!remind'):
-			self.remind_usage(msg)
+			self.reply(msg, body=self.topics['remind'])
 
